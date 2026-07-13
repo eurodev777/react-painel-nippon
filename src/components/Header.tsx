@@ -30,7 +30,7 @@ export default function Header({
             <div>
               <div className="flex items-center gap-1.5">
                 <span className="inline-flex items-center px-1.5 py-0.5 rounded-sm text-[9px] font-bold bg-stone-900 text-white uppercase tracking-wider">Admin</span>
-                <span className="text-xs font-semibold text-stone-500 uppercase tracking-widest font-mono">Nippon Country Club</span>
+                <span className="text-xs font-semibold text-stone-500 uppercase tracking-widest font-mono">Nippon Sorocaba</span>
               </div>
               <h1 className="text-2xl font-bold font-display tracking-tight text-stone-900">
                 Relação Oficial de Atletas

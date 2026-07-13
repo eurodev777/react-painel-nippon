@@ -33,6 +33,27 @@ export default function App() {
   const [isOfflineMode, setIsOfflineMode] = useState(false);
   const [isRetrying, setIsRetrying] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [login, setLogin] = useState("");
+  const [senha, setSenha] = useState("");
+  const [erroLogin, setErroLogin] = useState("");
+
+  const autenticar = () => {
+    const usuariosPermitidos = ["Regis Nippon", "Junior Nippon"];
+
+    const senhaPadrao = "Nippon2026!";
+
+    const usuarioValido = usuariosPermitidos.some(
+      (u) => u.toLowerCase() === login.trim().toLowerCase()
+    );
+
+    if (usuarioValido && senha === senhaPadrao) {
+      setErroLogin("");
+      setIsAdminView(true);
+      return;
+    }
+
+    setErroLogin("Usuário ou senha inválidos.");
+  };
 
   const removerEquipe = async (eqIdx: number) => {
     if (!dados) return;
@@ -50,30 +71,30 @@ export default function App() {
 
   const removerAtleta = async (eqIdx: number, atlIdx: number) => {
     if (!dados) return;
-  
+
     const atleta =
       dados.categorias[categoriaAtual].equipes[eqIdx].atletas[atlIdx];
-  
+
     const response = await fetch(
       `${API_URL}/deletar?tabela=atletas&id=${obterId(atleta)}`
     );
-  
+
     console.log(await response.text());
-  
+
     carregarDados();
   };
 
   const removerCategoria = async (idx: number) => {
     if (!dados) return;
-  
+
     const categoria = dados.categorias[idx];
-  
+
     const response = await fetch(
       `${API_URL}/deletar?tabela=categorias&id=${obterId(categoria)}`
     );
-  
+
     console.log(await response.text());
-  
+
     carregarDados();
   };
 
@@ -475,16 +496,6 @@ export default function App() {
     }
   };
 
-  const removerCategoriaLocal = (index: number) => {
-    if (!dados) return;
-    const novosDados = { ...dados };
-    novosDados.categorias.splice(index, 1);
-    setDados(novosDados);
-    localStorage.setItem("nippon_atletas_data", JSON.stringify(novosDados));
-    setCategoriaAtual(0);
-    showToastNotification();
-  };
-
   const adicionarEquipeLocal = () => {
     if (!dados) return;
     const novosDados = { ...dados };
@@ -495,15 +506,6 @@ export default function App() {
     };
     novosDados.categorias[categoriaAtual].equipes.push(novaEquipe);
     setDados(novosDados);
-  };
-
-  const removerEquipeLocal = (eqIdx: number) => {
-    if (!dados) return;
-    const novosDados = { ...dados };
-    novosDados.categorias[categoriaAtual].equipes.splice(eqIdx, 1);
-    setDados(novosDados);
-    localStorage.setItem("nippon_atletas_data", JSON.stringify(novosDados));
-    showToastNotification();
   };
 
   const adicionarAtletaLocal = (equipeIndex: number) => {
@@ -522,18 +524,6 @@ export default function App() {
       novoAtleta
     );
     setDados(novosDados);
-  };
-
-  const removerAtletaLocal = (eqIdx: number, atlIdx: number) => {
-    if (!dados) return;
-    const novosDados = { ...dados };
-    novosDados.categorias[categoriaAtual].equipes[eqIdx].atletas.splice(
-      atlIdx,
-      1
-    );
-    setDados(novosDados);
-    localStorage.setItem("nippon_atletas_data", JSON.stringify(novosDados));
-    showToastNotification();
   };
 
   const handleCategoriaChange = (novoTitulo: string) => {
@@ -647,7 +637,7 @@ export default function App() {
           className="w-10 h-10 border-4 border-red-600 border-t-transparent rounded-full mb-4"
         />
         <h3 className="text-stone-800 font-bold text-lg font-display">
-          NIPPON COUNTRY CLUB
+          NIPPON SOROCABA
         </h3>
         <p className="text-stone-400 text-sm mt-1">
           Carregando painel de gerenciamento oficial de atletas...
@@ -664,81 +654,58 @@ export default function App() {
     <div className="bg-stone-50 min-h-screen flex flex-col text-stone-800 font-sans selection:bg-red-200">
       {/* Intro Landing View vs. Active Dashboard View */}
       {!isAdminView ? (
-        <div className="flex-1 flex flex-col items-center justify-center py-12 px-4 max-w-4xl mx-auto text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-white p-8 md:p-12 rounded-3xl border border-stone-200/80 shadow-xl max-w-2xl w-full"
-          >
-            <div className="w-20 h-20 bg-red-50 text-red-600 border border-red-200/60 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-md shadow-red-500/5">
-              <Users className="w-10 h-10" />
-            </div>
+        <div className="flex-1 flex items-center justify-center bg-stone-100 px-4">
+          <div className="w-full max-w-md bg-white rounded-3xl shadow-xl border border-stone-200 p-8">
+            <h1 className="text-3xl font-black text-center text-red-600">
+              Nippon Sorocaba
+            </h1>
 
-            <p className="text-xs font-bold text-red-600 tracking-widest uppercase font-mono mb-2">
-              Nippon Country Club • Departamento de Esportes
+            <p className="text-center text-stone-500 mt-2 mb-8">
+              Painel Administrativo
             </p>
 
-            <h2 className="text-3xl md:text-4xl font-black font-display tracking-tight text-stone-900 mb-4">
-              Painel de Relação de Atletas
-            </h2>
+            <div className="space-y-5">
+              <div>
+                <label className="text-sm font-semibold">Usuário</label>
 
-            <p className="text-stone-500 text-sm md:text-base leading-relaxed mb-8">
-              Gerencie a relação oficial de equipes e atletas federados em todas
-              as categorias desportivas de forma integrada e segura.
-            </p>
+                <input
+                  type="text"
+                  value={login}
+                  onChange={(e) => setLogin(e.target.value)}
+                  className="mt-2 w-full border rounded-xl px-4 py-3 outline-none focus:border-red-600"
+                  placeholder="Digite seu usuário"
+                />
+              </div>
 
-            {/* Quick stats grid */}
-            <div className="grid grid-cols-3 gap-3 md:gap-4 mb-8 bg-stone-50 p-4 rounded-2xl border border-stone-200/50">
-              <div className="text-center">
-                <p className="text-xl md:text-2xl font-black text-stone-900 leading-none">
-                  {totalCats}
-                </p>
-                <p className="text-[10px] font-semibold text-stone-400 uppercase tracking-wider mt-1.5 font-mono">
-                  Categorias
-                </p>
-              </div>
-              <div className="text-center border-x border-stone-200">
-                <p className="text-xl md:text-2xl font-black text-stone-900 leading-none">
-                  {totalEqs}
-                </p>
-                <p className="text-[10px] font-semibold text-stone-400 uppercase tracking-wider mt-1.5 font-mono">
-                  Equipes
-                </p>
-              </div>
-              <div className="text-center">
-                <p className="text-xl md:text-2xl font-black text-stone-900 leading-none">
-                  {totalAtls}
-                </p>
-                <p className="text-[10px] font-semibold text-stone-400 uppercase tracking-wider mt-1.5 font-mono">
-                  Atletas
-                </p>
-              </div>
-            </div>
+              <div>
+                <label className="text-sm font-semibold">Senha</label>
 
-            <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <button
-                onClick={() => setIsAdminView(true)}
-                className="inline-flex items-center justify-center gap-2 bg-red-600 text-white px-8 py-3.5 rounded-xl text-sm font-bold hover:bg-red-700 transition shadow-lg shadow-red-600/10 cursor-pointer"
-              >
-                Acessar Painel de Controle
-              </button>
+                <input
+                  type="password"
+                  value={senha}
+                  onChange={(e) => setSenha(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") autenticar();
+                  }}
+                  className="mt-2 w-full border rounded-xl px-4 py-3 outline-none focus:border-red-600"
+                  placeholder="Digite sua senha"
+                />
+              </div>
+
+              {erroLogin && (
+                <div className="text-red-600 text-sm font-medium">
+                  {erroLogin}
+                </div>
+              )}
 
               <button
-                onClick={() => {
-                  setIsAdminView(true);
-                  setIsOfflineMode(true);
-                }}
-                className="inline-flex items-center justify-center gap-2 bg-stone-100 text-stone-700 px-6 py-3.5 rounded-xl text-sm font-bold hover:bg-stone-200 transition cursor-pointer"
+                onClick={autenticar}
+                className="w-full bg-red-600 hover:bg-red-700 text-white rounded-xl py-3 font-bold transition"
               >
-                Modo Demonstrativo (Offline)
+                Entrar
               </button>
             </div>
-
-            <div className="mt-8 flex items-center justify-center gap-2 text-xs text-stone-400 font-medium">
-              <ShieldCheck className="w-4 h-4 text-emerald-500" />
-              <span>Conexão segura com base de dados Nippon</span>
-            </div>
-          </motion.div>
+          </div>
         </div>
       ) : (
         <>
