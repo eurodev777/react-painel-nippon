@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-const API_URL = "http://sothink.com.br/apinippon/api/v2/nipponimages"; // MUDE AQUI
+const API_URL = "https://sothink.com.br/apinippon/api/v2/nipponimages"; // MUDE AQUI
 
 interface ImagemGaleria {
   id: number;
@@ -83,7 +83,6 @@ export default function GalleryAdmin({ onClose }) {
   return (
     /* 1. OVERLAY FIXO (Fundo escuro e centralizador) */
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-      /* 2. CONTAINER DO MODAL */
       <div className="w-full max-w-4xl bg-white rounded-xl shadow-2xl p-6 relative max-h-[95vh] overflow-y-auto">
         <h2 className="text-2xl font-bold mb-6 text-gray-800">
           Gerenciar Galeria
