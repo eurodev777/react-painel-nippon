@@ -17,8 +17,10 @@ import {
   X,
   ShieldCheck,
   FileImage,
+  Image,
 } from "lucide-react";
 import FormularioChaves from "./components/FormularioChaves";
+import GalleryAdmin from "./components/GalleryAdmin";
 
 const API_URL = "https://sothink.com.br/apinippon/api/v2/nippon";
 
@@ -40,6 +42,7 @@ export default function App() {
   const [erroLogin, setErroLogin] = useState("");
   // Adicione este state junto com os seus outros hooks useState (ex: abaixo de erroLogin)
   const [isChavesOpen, setIsChavesOpen] = useState(false);
+  const [isGaleriaOpen, setIsGaleriaOpen] = useState(false);
 
   const autenticar = () => {
     const usuariosPermitidos = ["Regis Nippon", "Junior Nippon"];
@@ -47,7 +50,7 @@ export default function App() {
     const senhaPadrao = "Nippon2026!";
 
     const usuarioValido = usuariosPermitidos.some(
-      (u) => u.toLowerCase() === login.trim().toLowerCase()
+      (u) => u.toLowerCase() === login.trim().toLowerCase(),
     );
 
     if (usuarioValido && senha === senhaPadrao) {
@@ -65,7 +68,7 @@ export default function App() {
     const equipe = dados.categorias[categoriaAtual].equipes[eqIdx];
 
     const response = await fetch(
-      `${API_URL}/deletar?tabela=equipes&id=${obterId(equipe)}`
+      `${API_URL}/deletar?tabela=equipes&id=${obterId(equipe)}`,
     );
 
     console.log(await response.text());
@@ -80,7 +83,7 @@ export default function App() {
       dados.categorias[categoriaAtual].equipes[eqIdx].atletas[atlIdx];
 
     const response = await fetch(
-      `${API_URL}/deletar?tabela=atletas&id=${obterId(atleta)}`
+      `${API_URL}/deletar?tabela=atletas&id=${obterId(atleta)}`,
     );
 
     console.log(await response.text());
@@ -94,7 +97,7 @@ export default function App() {
     const categoria = dados.categorias[idx];
 
     const response = await fetch(
-      `${API_URL}/deletar?tabela=categorias&id=${obterId(categoria)}`
+      `${API_URL}/deletar?tabela=categorias&id=${obterId(categoria)}`,
     );
 
     console.log(await response.text());
@@ -134,7 +137,7 @@ export default function App() {
         k.toLowerCase().includes("id") &&
         obj[k] !== undefined &&
         obj[k] !== null &&
-        String(obj[k]) !== "undefined"
+        String(obj[k]) !== "undefined",
     );
 
     if (chaveAlternativa) return obj[chaveAlternativa];
@@ -152,7 +155,7 @@ export default function App() {
 
     try {
       const response = await fetch(
-        "https://sothink.com.br/apinippon/api/v2/nippon/listar?tabela=completo"
+        "https://sothink.com.br/apinippon/api/v2/nippon/listar?tabela=completo",
       );
       if (!response.ok) {
         throw new Error(`Servidor respondeu com status: ${response.status}`);
@@ -170,7 +173,7 @@ export default function App() {
       }
     } catch (error: any) {
       console.warn(
-        "API falhou ou bloqueio de CORS. Usando fallback offline do LocalStorage."
+        "API falhou ou bloqueio de CORS. Usando fallback offline do LocalStorage.",
       );
 
       // Fallback state initialization
@@ -185,7 +188,7 @@ export default function App() {
         setDados({ categorias: DEFAULT_CATEGORIES });
         localStorage.setItem(
           "nippon_atletas_data",
-          JSON.stringify({ categorias: DEFAULT_CATEGORIES })
+          JSON.stringify({ categorias: DEFAULT_CATEGORIES }),
         );
       }
       setIsOfflineMode(true);
@@ -203,13 +206,13 @@ export default function App() {
   const resetParaDadosPadrao = () => {
     if (
       window.confirm(
-        "Tem certeza que deseja redefinir todas as tabelas para os dados esportivos padrões? Suas alterações locais serão perdidas."
+        "Tem certeza que deseja redefinir todas as tabelas para os dados esportivos padrões? Suas alterações locais serão perdidas.",
       )
     ) {
       setDados({ categorias: DEFAULT_CATEGORIES });
       localStorage.setItem(
         "nippon_atletas_data",
-        JSON.stringify({ categorias: DEFAULT_CATEGORIES })
+        JSON.stringify({ categorias: DEFAULT_CATEGORIES }),
       );
       setCategoriaAtual(0);
       setIsOfflineMode(true);
@@ -229,7 +232,7 @@ export default function App() {
     novoValor: string,
     parentId?: number | string,
     eqIdx?: number,
-    atlIdx?: number
+    atlIdx?: number,
   ) => {
     if (!novoValor.trim() || !dados) return;
 
@@ -248,11 +251,11 @@ export default function App() {
       ) {
         console.error(
           `[BLOQUEIO] Objeto pai da ${tipo} não possui um ID válido no banco de dados ainda.`,
-          parentId
+          parentId,
         );
         alert(
           `[Erro de Vínculo] Não é possível salvar este(a) ${tipo} ainda.\n\n` +
-            `Aguarde o salvamento completo do elemento pai, ou certifique-se de preencher o nome do pai primeiro.`
+            `Aguarde o salvamento completo do elemento pai, ou certifique-se de preencher o nome do pai primeiro.`,
         );
         return;
       }
@@ -351,7 +354,7 @@ export default function App() {
           {
             method: "POST",
             body: formData,
-          }
+          },
         );
       } else {
         response = await fetch(
@@ -360,7 +363,7 @@ export default function App() {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ tipo, id, valor: novoValor }),
-          }
+          },
         );
       }
 
@@ -369,7 +372,7 @@ export default function App() {
 
       if (!response.ok) {
         throw new Error(
-          `Servidor retornou erro status ${response.status}. Detalhes: ${textoResposta}`
+          `Servidor retornou erro status ${response.status}. Detalhes: ${textoResposta}`,
         );
       }
 
@@ -426,7 +429,7 @@ export default function App() {
 
       // Fallback temporarily inside current session state
       alert(
-        `[Servidor de Banco] Não foi possível salvar: ${error.message}.\nO item foi mantido temporariamente no seu navegador.`
+        `[Servidor de Banco] Não foi possível salvar: ${error.message}.\nO item foi mantido temporariamente no seu navegador.`,
       );
     }
   };
@@ -467,7 +470,7 @@ export default function App() {
           {
             method: "POST",
             body: formData,
-          }
+          },
         );
 
         const resText = await response.text();
@@ -481,7 +484,7 @@ export default function App() {
           setDados(dadosComId);
           localStorage.setItem(
             "nippon_atletas_data",
-            JSON.stringify(dadosComId)
+            JSON.stringify(dadosComId),
           );
         }
         setSavingStatus("saved");
@@ -489,7 +492,7 @@ export default function App() {
       } catch (err) {
         console.warn(
           "Erro ao inserir categoria remotamente. Mantido localmente.",
-          err
+          err,
         );
         setSavingStatus("idle");
       }
@@ -525,7 +528,7 @@ export default function App() {
     }
 
     novosDados.categorias[categoriaAtual].equipes[equipeIndex].atletas.push(
-      novoAtleta
+      novoAtleta,
     );
     setDados(novosDados);
   };
@@ -547,7 +550,7 @@ export default function App() {
   const handleAtletaChange = (
     equipeIndex: number,
     atletaIndex: number,
-    novoNome: string
+    novoNome: string,
   ) => {
     if (!dados) return;
     const novosDados = { ...dados };
@@ -812,7 +815,7 @@ export default function App() {
                           <span className="inline-block text-[9px] font-bold px-2 py-0.5 rounded-sm bg-stone-100 text-stone-500 uppercase tracking-widest font-mono mb-2">
                             {res.categoryTitle.replace(
                               "RELAÇÃO DOS ATLETAS - ",
-                              ""
+                              "",
                             )}
                           </span>
                           <h4 className="font-bold text-stone-800 text-sm uppercase">
@@ -833,7 +836,7 @@ export default function App() {
                         <button
                           onClick={() => {
                             const catIdx = dados?.categorias.findIndex(
-                              (c) => c.titulo === res.categoryTitle
+                              (c) => c.titulo === res.categoryTitle,
                             );
                             if (catIdx !== undefined && catIdx !== -1) {
                               setCategoriaAtual(catIdx);
@@ -875,7 +878,7 @@ export default function App() {
                           salvarAlteracaoNoServidor(
                             "categoria",
                             obterId(activeCategoryObj),
-                            activeCategoryObj.titulo
+                            activeCategoryObj.titulo,
                           )
                         }
                         className="w-full text-stone-900 font-extrabold text-lg md:text-xl uppercase tracking-wider bg-transparent border-b border-transparent hover:border-stone-300 focus:border-red-600 focus:bg-stone-50 px-2 py-1 outline-hidden rounded-md transition duration-200"
@@ -895,6 +898,15 @@ export default function App() {
                       >
                         <FileImage className="w-4 h-4" />
                         <span>Formulário de Chaves</span>
+                      </button>
+
+                      {/* SEU NOVO BOTÃO DE CHAVES AQUI */}
+                      <button
+                        onClick={() => setIsGaleriaOpen(true)}
+                        className="flex items-center gap-1.5 bg-stone-900 hover:bg-stone-800 text-white px-4 py-2.5 rounded-xl text-xs font-bold transition shadow-md cursor-pointer"
+                      >
+                        <Image className="w-4 h-4" />
+                        <span>Galeria de Fotos</span>
                       </button>
 
                       <button
@@ -968,6 +980,10 @@ export default function App() {
       {/* Renderização condicional do formulário de chaves */}
       {isChavesOpen && (
         <FormularioChaves onClose={() => setIsChavesOpen(false)} />
+      )}
+      {/* Renderização condicional do formulário de chaves */}
+      {isGaleriaOpen && (
+        <GalleryAdmin onClose={() => setIsGaleriaOpen(false)} />
       )}
     </div>
   );
